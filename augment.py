@@ -12,7 +12,6 @@ TARGET_COUNT = 50
 # 定义增广流程 (L14)
 AUG_TRANSFORM = A.Compose([
     A.HorizontalFlip(p=0.5),
-    A.VerticalFlip(p=0.2),
     A.Rotate(limit=30, p=0.5),
     A.RandomBrightnessContrast(p=0.2),
     A.GaussianBlur(p=0.1),

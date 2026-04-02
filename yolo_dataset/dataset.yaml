@@ -1,0 +1,9 @@
+
+path: /Users/jimjiang/.openclaw/workspace/yolo-detector-6002/yolo_dataset
+train: images/train
+val: images/val
+
+nc: 2
+names:
+  0: OK
+  1: NG
