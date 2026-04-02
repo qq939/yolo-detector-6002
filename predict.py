@@ -73,7 +73,7 @@ def real_predict(image_path, model_path=None):
         model = YOLO('yolov8n.pt')
     
     # 推理
-    results = model.predict(image_path, save=False, save_txt=False)
+    results = model.predict(image_path, save=True, save_txt=False)
     
     result = results[0]
     

@@ -5,44 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YOLO工业图像检测</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       min-height: 100vh;
       color: #fff;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      padding: 30px 0;
-    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header { text-align: center; padding: 30px 0; }
     header h1 {
       font-size: 2.5rem;
       background: linear-gradient(90deg, #00d4ff, #7c3aed);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
-    header p {
-      color: #888;
-      margin-top: 10px;
-    }
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    header p { color: #888; margin-top: 10px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .tab-btn {
-      padding: 12px 30px;
+      padding: 12px 25px;
       border: none;
       background: rgba(255,255,255,0.1);
       color: #fff;
@@ -51,26 +32,11 @@
       font-size: 1rem;
       transition: all 0.3s;
     }
-    .tab-btn.active {
-      background: linear-gradient(90deg, #00d4ff, #7c3aed);
-    }
-    .tab-content {
-      display: none;
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 30px;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #aaa;
-    }
+    .tab-btn.active { background: linear-gradient(90deg, #00d4ff, #7c3aed); }
+    .tab-content { display: none; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; }
+    .tab-content.active { display: block; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
     .form-group input, .form-group select {
       width: 100%;
       padding: 12px;
@@ -80,10 +46,7 @@
       color: #fff;
       font-size: 1rem;
     }
-    .form-group input:focus, .form-group select:focus {
-      outline: none;
-      border-color: #00d4ff;
-    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #00d4ff; }
     .btn {
       padding: 14px 30px;
       border: none;
@@ -92,23 +55,37 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-    .btn-primary {
-      background: linear-gradient(90deg, #00d4ff, #7c3aed);
-      color: #fff;
+    .btn-primary { background: linear-gradient(90deg, #00d4ff, #7c3aed); color: #fff; }
+    .btn-danger { background: #ff4757; color: #fff; }
+    .btn-success { background: #2ed573; color: #fff; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,212,255,0.3); }
+    .upload-area {
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .btn-danger {
-      background: #ff4757;
-      color: #fff;
+    .upload-area:hover { border-color: #00d4ff; background: rgba(0,212,255,0.1); }
+    .upload-area input { display: none; }
+    .dataset-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .dataset-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
     }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(0,212,255,0.3);
-    }
+    .dataset-card.ok { border: 2px solid #2ed573; }
+    .dataset-card.ng { border: 2px solid #ff4757; }
+    .dataset-card .count { font-size: 2.5rem; font-weight: bold; }
+    .dataset-card.ok .count { color: #2ed573; }
+    .dataset-card.ng .count { color: #ff4757; }
     .progress-bar {
       width: 100%;
-      height: 20px;
+      height: 24px;
       background: rgba(255,255,255,0.1);
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
       margin-top: 20px;
     }
@@ -117,199 +94,124 @@
       background: linear-gradient(90deg, #00d4ff, #7c3aed);
       width: 0%;
       transition: width 0.3s;
-    }
-    .status-text {
-      text-align: center;
-      margin-top: 10px;
-      color: #aaa;
-    }
-    .upload-area {
-      border: 2px dashed rgba(255,255,255,0.3);
-      border-radius: 12px;
-      padding: 40px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .upload-area:hover {
-      border-color: #00d4ff;
-      background: rgba(0,212,255,0.1);
-    }
-    .upload-area input {
-      display: none;
-    }
-    .preview-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .preview-item {
-      background: rgba(255,255,255,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .preview-item img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-    }
-    .preview-item .info {
-      padding: 10px;
-      font-size: 0.85rem;
-      color: #aaa;
-    }
-    .result-section {
-      margin-top: 30px;
-    }
-    .result-image {
-      max-width: 100%;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-    .detection-results {
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    .detection-item {
       display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .detection-item:last-child {
-      border-bottom: none;
-    }
-    .confidence {
-      color: #00d4ff;
-      font-weight: bold;
-    }
-    .download-btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #00d4ff;
-      color: #000;
-      text-decoration: none;
-      border-radius: 8px;
-      margin-top: 15px;
-    }
-    .model-list {
-      margin-top: 20px;
-    }
-    .model-item {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 8px;
-      margin-bottom: 10px;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #fff;
     }
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 40px;
-    }
+    .result-section { margin-top: 30px; }
+    .result-image, .result-video { max-width: 100%; border-radius: 12px; margin-top: 20px; }
+    .video-player { width: 100%; border-radius: 12px; margin-top: 20px; }
+    .status-text { text-align: center; margin-top: 10px; color: #aaa; }
+    .loading { display: none; text-align: center; padding: 20px; }
     .spinner {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       border: 4px solid rgba(255,255,255,0.1);
       border-top-color: #00d4ff;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+    .preview-item { background: rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; }
+    .preview-item img, .preview-item video { width: 100%; height: 120px; object-fit: cover; }
+    .preview-item .info { padding: 10px; font-size: 0.8rem; color: #aaa; }
+    .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    .alert-success { background: rgba(46, 213, 115, 0.2); border: 1px solid #2ed573; color: #2ed573; }
+    .alert-error { background: rgba(255, 71, 87, 0.2); border: 1px solid #ff4757; color: #ff4757; }
+    .row { display: flex; gap: 15px; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 200px; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <h1>🏭 YOLO工业图像检测</h1>
-      <p>支持训练 + 推理一体的工业视觉检测系统</p>
+      <p>OK/NG分类训练 + 视频Demo生成</p>
     </header>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('inference')">推理检测</button>
+      <button class="tab-btn active" onclick="switchTab('inference')">图片推理</button>
       <button class="tab-btn" onclick="switchTab('training')">模型训练</button>
+      <button class="tab-btn" onclick="switchTab('demo')">视频Demo</button>
       <button class="tab-btn" onclick="switchTab('models')">模型管理</button>
-      <button class="tab-btn" onclick="switchTab('results')">结果下载</button>
     </div>
 
-    <!-- 推理检测 -->
+    <!-- 图片推理 -->
     <div id="inference" class="tab-content active">
       <h2>🔍 图片推理检测</h2>
       <div class="upload-area" onclick="document.getElementById('inferenceInput').click()">
         <input type="file" id="inferenceInput" accept="image/*" onchange="handleInferenceUpload(event)">
         <p>点击选择图片或拖拽到此处</p>
-        <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">支持 JPG, PNG 格式</p>
+        <p style="font-size: 0.85rem; color: #888;">支持 JPG, PNG 格式</p>
       </div>
-      
       <div id="inferencePreview" class="preview-grid"></div>
+      <button class="btn btn-primary" onclick="runInference()" style="margin-top: 15px;">开始推理</button>
       
-      <div style="margin-top: 20px;">
-        <button class="btn btn-primary" onclick="runInference()">开始推理</button>
-      </div>
-
       <div id="inferenceLoading" class="loading">
         <div class="spinner"></div>
         <p style="margin-top: 15px;">正在推理中...</p>
       </div>
-
+      
       <div id="inferenceResult" class="result-section" style="display: none;">
         <h3>推理结果</h3>
         <div id="resultImageContainer"></div>
-        <div id="detectionResults" class="detection-results"></div>
-        <a id="downloadResult" class="download-btn" href="#" download>下载结果图片</a>
+        <a id="downloadResult" class="btn btn-success" href="#" download>下载结果图片</a>
       </div>
     </div>
 
     <!-- 模型训练 -->
     <div id="training" class="tab-content">
-      <h2>⚙️ 模型训练</h2>
+      <h2>⚙️ OK/NG 模型训练</h2>
       
-      <div class="form-group">
-        <label>数据集上传 (ZIP格式)</label>
-        <div class="upload-area" onclick="document.getElementById('datasetInput').click()">
-          <input type="file" id="datasetInput" accept=".zip" onchange="handleDatasetUpload(event)">
-          <p>点击上传数据集压缩包</p>
-          <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">包含 images 和 labels 文件夹</p>
+      <div class="dataset-cards">
+        <div class="dataset-card ok">
+          <h3>OK 图片</h3>
+          <div class="count" id="okCount">0</div>
+          <p>张</p>
+          <div class="upload-area" onclick="document.getElementById('okInput').click()" style="margin-top: 15px; padding: 15px;">
+            <input type="file" id="okInput" accept=".zip" onchange="uploadDataset('ok', event)">
+            <p style="font-size: 0.85rem;">上传OK压缩包</p>
+          </div>
         </div>
-        <div id="datasetName" style="margin-top: 10px; color: #00d4ff;"></div>
+        <div class="dataset-card ng">
+          <h3>NG 图片</h3>
+          <div class="count" id="ngCount">0</div>
+          <p>张</p>
+          <div class="upload-area" onclick="document.getElementById('ngInput').click()" style="margin-top: 15px; padding: 15px;">
+            <input type="file" id="ngInput" accept=".zip" onchange="uploadDataset('ng', event)">
+            <p style="font-size: 0.85rem;">上传NG压缩包</p>
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>模型类型</label>
-        <select id="modelType">
-          <option value="yolov8n">YOLOv8n (nano - 最快)</option>
-          <option value="yolov8s">YOLOv8s (small)</option>
-          <option value="yolov8m">YOLOv8m (medium)</option>
-          <option value="yolov8l">YOLOv8l (large)</option>
-          <option value="yolov8x">YOLOv8x (xlarge - 最准)</option>
-        </select>
-      </div>
+      <div id="datasetStatus"></div>
 
-      <div class="form-group">
-        <label>训练轮数 (epochs)</label>
-        <input type="number" id="epochs" value="100" min="1" max="1000">
-      </div>
-
-      <div class="form-group">
-        <label>批量大小 (batch size)</label>
-        <input type="number" id="batchSize" value="16" min="1" max="128">
-      </div>
-
-      <div class="form-group">
-        <label>图像尺寸</label>
-        <input type="number" id="imageSize" value="640" min="320" max="1280" step="32">
+      <div class="row">
+        <div class="form-group">
+          <label>模型类型</label>
+          <select id="modelType">
+            <option value="yolov8n">YOLOv8n (nano - 最快)</option>
+            <option value="yolov8s">YOLOv8s (small)</option>
+            <option value="yolov8m">YOLOv8m (medium)</option>
+            <option value="yolov8l">YOLOv8l (large)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>训练轮数 (epochs)</label>
+          <input type="number" id="epochs" value="50" min="1" max="500">
+        </div>
+        <div class="form-group">
+          <label>批量大小</label>
+          <input type="number" id="batchSize" value="8" min="1" max="64">
+        </div>
       </div>
 
       <button class="btn btn-primary" onclick="startTraining()">开始训练</button>
-      <button class="btn btn-danger" onclick="stopTraining()" style="margin-left: 10px;">停止训练</button>
+      <button class="btn btn-danger" onclick="stopTraining()" style="margin-left: 10px;">停止</button>
 
       <div id="trainLoading" class="loading">
         <div class="spinner"></div>
@@ -318,40 +220,67 @@
 
       <div id="trainProgress" style="display: none;">
         <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-fill" id="progressFill">0%</div>
         </div>
         <p class="status-text" id="statusText">准备中...</p>
+      </div>
+    </div>
+
+    <!-- 视频Demo -->
+    <div id="demo" class="tab-content">
+      <h2>🎬 视频Demo生成</h2>
+      
+      <div class="form-group">
+        <label>上传视频</label>
+        <div class="upload-area" onclick="document.getElementById('videoInput').click()">
+          <input type="file" id="videoInput" accept="video/*" onchange="handleVideoUpload(event)">
+          <p>点击选择视频文件</p>
+          <p style="font-size: 0.85rem; color: #888;">支持 MP4, AVI, MOV 格式</p>
+        </div>
+        <div id="videoPreview" style="margin-top: 15px;"></div>
+      </div>
+
+      <div class="form-group">
+        <label>选择模型</label>
+        <select id="demoModel">
+          <option value="">自动选择最新模型</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateDemo()">生成Demo</button>
+
+      <div id="demoLoading" class="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px;">正在处理视频...</p>
+      </div>
+
+      <div id="demoProgress" style="display: none;">
+        <div class="progress-bar">
+          <div class="progress-fill" id="demoProgressFill">0%</div>
+        </div>
+        <p class="status-text" id="demoStatusText">处理中...</p>
+      </div>
+
+      <div id="demoResult" class="result-section" style="display: none;">
+        <h3>Demo生成完成!</h3>
+        <video id="resultVideo" class="video-player" controls></video>
+        <br>
+        <a id="downloadDemo" class="btn btn-success" href="#" download>下载Demo视频</a>
       </div>
     </div>
 
     <!-- 模型管理 -->
     <div id="models" class="tab-content">
       <h2>📦 模型管理</h2>
-      
-      <div class="form-group">
-        <label>上传自定义模型</label>
-        <div class="upload-area" onclick="document.getElementById('modelInput').click()">
-          <input type="file" id="modelInput" accept=".pt,.pth" onchange="handleModelUpload(event)">
-          <p>点击上传模型文件 (.pt/.pth)</p>
-        </div>
-      </div>
-
-      <h3>可用模型</h3>
-      <div id="modelList" class="model-list"></div>
-    </div>
-
-    <!-- 结果下载 -->
-    <div id="results" class="tab-content">
-      <h2>📥 推理结果下载</h2>
-      <div id="resultsList" class="preview-grid"></div>
+      <div id="modelList" class="preview-grid"></div>
     </div>
   </div>
 
   <script>
     let inferenceFiles = [];
-    let datasetFile = null;
-    let modelFile = null;
-    let trainProcess = null;
+    let selectedVideo = null;
+    let currentJobId = null;
+    let trainJobId = null;
 
     // 切换标签页
     function switchTab(tabId) {
@@ -361,64 +290,58 @@
       event.target.classList.add('active');
       
       if (tabId === 'models') loadModels();
-      if (tabId === 'results') loadResults();
+      if (tabId === 'demo') loadDemoModels();
+    }
+
+    // 页面加载时获取数据集状态
+    loadDatasetStatus();
+
+    async function loadDatasetStatus() {
+      try {
+        const response = await fetch('/api/train/dataset');
+        const data = await response.json();
+        document.getElementById('okCount').textContent = data.ok || 0;
+        document.getElementById('ngCount').textContent = data.ng || 0;
+        
+        if (data.ok > 0 && data.ng > 0) {
+          document.getElementById('datasetStatus').innerHTML = '<div class="alert alert-success">数据集已就绪，可以开始训练</div>';
+        } else {
+          document.getElementById('datasetStatus').innerHTML = '<div class="alert alert-error">请同时上传OK和NG图片压缩包</div>';
+        }
+      } catch (e) {}
+    }
+
+    // 上传数据集
+    async function uploadDataset(type, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`/api/train/dataset/${type}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      alert(result.message);
+      loadDatasetStatus();
     }
 
     // 处理推理图片上传
     function handleInferenceUpload(event) {
-      const files = event.target.files;
-      inferenceFiles = Array.from(files);
-      
+      inferenceFiles = Array.from(event.target.files);
       const preview = document.getElementById('inferencePreview');
       preview.innerHTML = '';
       
       inferenceFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          preview.innerHTML += `
-            <div class="preview-item">
-              <img src="${e.target.result}" alt="${file.name}">
-              <div class="info">${file.name}</div>
-            </div>
-          `;
+          preview.innerHTML += `<div class="preview-item"><img src="${e.target.result}"><div class="info">${file.name}</div></div>`;
         };
         reader.readAsDataURL(file);
       });
-    }
-
-    // 处理数据集上传
-    function handleDatasetUpload(event) {
-      datasetFile = event.target.files[0];
-      if (datasetFile) {
-        document.getElementById('datasetName').textContent = '已选择: ' + datasetFile.name;
-      }
-    }
-
-    // 处理模型上传
-    function handleModelUpload(event) {
-      modelFile = event.target.files[0];
-      if (modelFile) {
-        uploadModel();
-      }
-    }
-
-    // 上传模型
-    async function uploadModel() {
-      const formData = new FormData();
-      formData.append('model', modelFile);
-      
-      const response = await fetch('/api/models', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const result = await response.json();
-      if (result.success) {
-        alert('模型上传成功');
-        loadModels();
-      } else {
-        alert('上传失败: ' + result.message);
-      }
     }
 
     // 运行推理
@@ -431,94 +354,190 @@
       document.getElementById('inferenceLoading').style.display = 'block';
       document.getElementById('inferenceResult').style.display = 'none';
 
-      for (const file of inferenceFiles) {
-        const formData = new FormData();
-        formData.append('image', file);
-        
-        try {
-          const response = await fetch('/api/predict', {
-            method: 'POST',
-            body: formData
-          });
-          
-          const result = await response.json();
-          
-          document.getElementById('inferenceLoading').style.display = 'none';
+      const file = inferenceFiles[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/api/predict', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById('inferenceLoading').style.display = 'none';
+
+        if (result.success && result.resultImage) {
           document.getElementById('inferenceResult').style.display = 'block';
-          
-          if (result.success && result.resultImage) {
-            document.getElementById('resultImageContainer').innerHTML = 
-              `<img src="${result.resultImage}" class="result-image" alt="推理结果">`;
-            
-            // 显示检测结果
-            if (result.result.detections) {
-              let html = '<h4>检测到目标:</h4>';
-              result.result.detections.forEach(d => {
-                html += `
-                  <div class="detection-item">
-                    <span>${d.class}</span>
-                    <span class="confidence">${(d.confidence * 100).toFixed(1)}%</span>
-                  </div>
-                `;
-              });
-              document.getElementById('detectionResults').innerHTML = html;
-            }
-            
-            // 设置下载链接
-            document.getElementById('downloadResult').href = result.resultImage;
-          } else {
-            document.getElementById('detectionResults').innerHTML = '<p>推理完成，但未检测到目标</p>';
-          }
-        } catch (error) {
-          console.error('推理失败:', error);
-          alert('推理失败: ' + error.message);
+          document.getElementById('resultImageContainer').innerHTML = `<img src="${result.resultImage}" class="result-image">`;
+          document.getElementById('downloadResult').href = result.resultImage;
+        } else {
+          alert('推理完成，但未检测到目标');
         }
+      } catch (error) {
+        alert('推理失败: ' + error.message);
       }
     }
 
     // 开始训练
     async function startTraining() {
-      if (!datasetFile) {
-        alert('请先上传数据集');
+      const okCount = parseInt(document.getElementById('okCount').textContent);
+      const ngCount = parseInt(document.getElementById('ngCount').textContent);
+
+      if (okCount === 0 || ngCount === 0) {
+        alert('请先上传OK和NG数据集');
         return;
       }
 
       const formData = new FormData();
-      formData.append('dataset', datasetFile);
       formData.append('modelType', document.getElementById('modelType').value);
       formData.append('epochs', document.getElementById('epochs').value);
       formData.append('batchSize', document.getElementById('batchSize').value);
-      formData.append('imageSize', document.getElementById('imageSize').value);
 
       document.getElementById('trainLoading').style.display = 'block';
       document.getElementById('trainProgress').style.display = 'block';
 
       try {
-        const response = await fetch('/api/train', {
+        const response = await fetch('/api/train/start', {
           method: 'POST',
           body: formData
         });
-        
+
         const result = await response.json();
         
-        document.getElementById('trainLoading').style.display = 'none';
-        
         if (result.success) {
-          alert('训练完成！');
+          trainJobId = result.jobId;
+          pollTrainStatus();
         } else {
-          alert('训练失败: ' + result.message);
+          alert(result.message);
+          document.getElementById('trainLoading').style.display = 'none';
         }
       } catch (error) {
-        console.error('训练失败:', error);
         alert('训练失败: ' + error.message);
+        document.getElementById('trainLoading').style.display = 'none';
+      }
+    }
+
+    // 轮询训练状态
+    async function pollTrainStatus() {
+      if (!trainJobId) return;
+
+      try {
+        const response = await fetch(`/api/train/status/${trainJobId}`);
+        const status = await response.json();
+
+        document.getElementById('progressFill').style.width = status.progress + '%';
+        document.getElementById('progressFill').textContent = status.progress + '%';
+        document.getElementById('statusText').textContent = status.message;
+
+        if (status.status === 'completed') {
+          document.getElementById('trainLoading').style.display = 'none';
+          alert('训练完成!');
+          loadModels();
+        } else if (status.status === 'error') {
+          document.getElementById('trainLoading').style.display = 'none';
+          alert('训练失败');
+        } else {
+          setTimeout(pollTrainStatus, 2000);
+        }
+      } catch (e) {
+        setTimeout(pollTrainStatus, 2000);
       }
     }
 
     // 停止训练
     async function stopTraining() {
-      await fetch('/api/train/stop', { method: 'POST' });
+      trainJobId = null;
       document.getElementById('trainLoading').style.display = 'none';
       alert('训练已停止');
+    }
+
+    // 处理视频上传
+    function handleVideoUpload(event) {
+      selectedVideo = event.target.files[0];
+      if (selectedVideo) {
+        const url = URL.createObjectURL(selectedVideo);
+        document.getElementById('videoPreview').innerHTML = `
+          <video src="${url}" style="width: 300px; border-radius: 8px;" controls></video>
+          <p style="margin-top: 10px;">${selectedVideo.name}</p>
+        `;
+      }
+    }
+
+    // 加载模型列表（Demo用）
+    async function loadDemoModels() {
+      const response = await fetch('/api/models');
+      const result = await response.json();
+      
+      const select = document.getElementById('demoModel');
+      select.innerHTML = '<option value="">自动选择最新模型</option>';
+      
+      result.models.forEach(m => {
+        select.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+      });
+    }
+
+    // 生成Demo
+    async function generateDemo() {
+      if (!selectedVideo) {
+        alert('请先选择视频');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('video', selectedVideo);
+
+      document.getElementById('demoLoading').style.display = 'block';
+      document.getElementById('demoProgress').style.display = 'block';
+      document.getElementById('demoResult').style.display = 'none';
+
+      try {
+        const response = await fetch('/api/demo/video', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          currentJobId = result.jobId;
+          pollDemoStatus(result.output);
+        } else {
+          alert(result.message);
+          document.getElementById('demoLoading').style.display = 'none';
+        }
+      } catch (error) {
+        alert('生成失败: ' + error.message);
+        document.getElementById('demoLoading').style.display = 'none';
+      }
+    }
+
+    // 轮询Demo状态
+    async function pollDemoStatus(outputUrl) {
+      if (!currentJobId) return;
+
+      try {
+        const response = await fetch(`/api/demo/status/${currentJobId}`);
+        const status = await response.json();
+
+        document.getElementById('demoProgressFill').style.width = status.progress + '%';
+        document.getElementById('demoProgressFill').textContent = status.progress + '%';
+        document.getElementById('demoStatusText').textContent = status.message;
+
+        if (status.status === 'completed') {
+          document.getElementById('demoLoading').style.display = 'none';
+          document.getElementById('demoResult').style.display = 'block';
+          document.getElementById('resultVideo').src = outputUrl;
+          document.getElementById('downloadDemo').href = outputUrl;
+        } else if (status.status === 'error') {
+          document.getElementById('demoLoading').style.display = 'none';
+          alert('生成失败');
+        } else {
+          setTimeout(() => pollDemoStatus(outputUrl), 2000);
+        }
+      } catch (e) {
+        setTimeout(() => pollDemoStatus(outputUrl), 2000);
+      }
     }
 
     // 加载模型列表
@@ -533,56 +552,15 @@
       }
       
       list.innerHTML = result.models.map(m => `
-        <div class="model-item">
-          <div>
-            <strong>${m.name}</strong>
-            <br><small style="color: #888;">${(m.size / 1024 / 1024).toFixed(2)} MB</small>
-          </div>
-          <button class="btn btn-primary" onclick="useModel('${m.name}')">使用</button>
-        </div>
-      `).join('');
-    }
-
-    // 使用模型
-    function useModel(modelName) {
-      alert('已选择模型: ' + modelName);
-    }
-
-    // 加载结果列表
-    async function loadResults() {
-      const response = await fetch('/api/results');
-      const result = await response.json();
-      
-      const list = document.getElementById('resultsList');
-      if (result.results.length === 0) {
-        list.innerHTML = '<p style="color: #888;">暂无推理结果</p>';
-        return;
-      }
-      
-      list.innerHTML = result.results.map(r => `
         <div class="preview-item">
-          <img src="${r.path}" alt="${r.name}">
           <div class="info">
-            ${r.name}<br>
-            <small>${new Date(r.created).toLocaleString()}</small>
+            <strong>${m.name}</strong><br>
+            ${(m.size / 1024 / 1024).toFixed(2)} MB<br>
+            <small>${new Date(m.mtime).toLocaleString()}</small>
           </div>
-          <a href="${r.path}" download class="download-btn" style="display:block;text-align:center;margin:10px;">下载</a>
         </div>
       `).join('');
     }
-
-    // 轮询训练状态
-    setInterval(async () => {
-      try {
-        const response = await fetch('/api/train/status');
-        const status = await response.json();
-        
-        if (status.status === 'training') {
-          document.getElementById('progressFill').style.width = status.progress + '%';
-          document.getElementById('statusText').textContent = `训练进度: ${status.progress}%`;
-        }
-      } catch (e) {}
-    }, 2000);
   </script>
 </body>
 </html>
