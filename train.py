@@ -108,7 +108,7 @@ def main():
         imgsz=640,
         batch=16,
         name='yolo_detector',
-        project='runs/train'
+        project='/Users/jimjiang/.openclaw/workspace/yolo-detector-6002/public/runs/train'
     )
     print("Training completed.")
 

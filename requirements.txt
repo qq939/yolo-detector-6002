@@ -2,3 +2,5 @@ ultralytics
 pillow
 opencv-python
 albumentations
+flask
+flask-cors

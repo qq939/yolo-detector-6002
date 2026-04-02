@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO 分类推理 - 最简版</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .container { display: flex; width: 800px; justify-content: space-around; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
+        .left, .right { width: 45%; display: flex; flex-direction: column; align-items: center; }
+        img { max-width: 100%; border-radius: 5px; margin-top: 20px; }
+        .result-box { margin-top: 20px; font-size: 24px; font-weight: bold; }
+        .ok { color: green; }
+        .ng { color: red; }
+    </style>
+</head>
+<body>
+    <h1>YOLO 分类模型推理</h1>
+    <div class="container">
+        <div class="left">
+            <h3>上传图片</h3>
+            <input type="file" id="imageInput" accept="image/*">
+            <img id="preview" style="display:none;">
+        </div>
+        <div class="right">
+            <h3>推理结果</h3>
+            <div id="result" class="result-box">---</div>
+            <div id="confidence" style="margin-top: 10px; color: #666;">置信度: ---</div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        const resultDiv = document.getElementById('result');
+        const confidenceDiv = document.getElementById('confidence');
+
+        imageInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 显示预览
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            // 发送到后端
+            const formData = new FormData();
+            formData.append('file', file);
+
+            resultDiv.innerText = '正在推理...';
+            confidenceDiv.innerText = '置信度: ---';
+
+            try {
+                const response = await fetch('http://localhost:5001/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const label = data.label.toUpperCase();
+                    resultDiv.innerText = label;
+                    resultDiv.className = 'result-box ' + (label === 'OK' ? 'ok' : 'ng');
+                    confidenceDiv.innerText = '置信度: ' + (data.confidence * 100).toFixed(2) + '%';
+                } else {
+                    resultDiv.innerText = '错误: ' + (data.error || '未知错误');
+                    resultDiv.className = 'result-box';
+                }
+            } catch (err) {
+                resultDiv.innerText = '请求失败';
+                resultDiv.className = 'result-box';
+                console.error(err);
+            }
+        };
+    </script>
+</body>
+</html>

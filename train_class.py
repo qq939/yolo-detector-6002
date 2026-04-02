@@ -83,7 +83,7 @@ def main():
         imgsz=224,
         batch=16,
         name='yolo_classifier',
-        project='runs/train_cls'
+        project='/Users/jimjiang/.openclaw/workspace/yolo-detector-6002/public/runs/train_cls'
     )
     print("Classification training completed.")
 
