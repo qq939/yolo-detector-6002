@@ -1,6 +1,7 @@
-train: ../train/images
-val: ../valid/images
-test: ../test/images
+path: /Users/jimjiang/.openclaw/workspace/yolo-detector-6002/segment_dataset
+train: train/images
+val: valid/images
+test: test/images
 
 nc: 3
 names: ['black metal plate', 'shiney metal plate', 'spacer']
