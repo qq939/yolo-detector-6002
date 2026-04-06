@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO 分割推理 - 最简版</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 30px; background-color: #f0f2f5; }
+        .container { display: flex; width: 1000px; justify-content: space-between; gap: 20px; }
+        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); flex: 1; display: flex; flex-direction: column; align-items: center; }
+        img { max-width: 100%; border-radius: 5px; margin-top: 15px; border: 1px solid #ddd; }
+        .info { margin-top: 15px; font-size: 18px; color: #333; text-align: center; }
+        .tag { display: inline-block; background: #7c3aed; color: white; padding: 4px 10px; border-radius: 4px; margin: 2px; font-size: 14px; }
+        h1 { color: #1a1a2e; margin-bottom: 30px; }
+        input[type="file"] { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>YOLO 实例分割推理</h1>
+    <div class="container">
+        <div class="card">
+            <h3>原始图片</h3>
+            <input type="file" id="imageInput" accept="image/*">
+            <img id="originalPreview" style="display:none;">
+        </div>
+        <div class="card">
+            <h3>分割结果</h3>
+            <div id="status" class="info">等待上传...</div>
+            <img id="resultImage" style="display:none;">
+            <div id="tags" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const resultImage = document.getElementById('resultImage');
+        const statusDiv = document.getElementById('status');
+        const tagsDiv = document.getElementById('tags');
+
+        imageInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 显示原图预览
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                originalPreview.src = event.target.result;
+                originalPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            // 清空旧结果
+            resultImage.style.display = 'none';
+            tagsDiv.innerHTML = '';
+            statusDiv.innerText = '正在推理...';
+
+            // 发送请求
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://localhost:5002/predict_seg', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    statusDiv.innerText = '推理完成';
+                    resultImage.src = `http://localhost:5002/uploads/${data.result_image}?t=${new Date().getTime()}`;
+                    resultImage.style.display = 'block';
+                    
+                    // 显示检测到的类别标签
+                    if (data.detected && data.detected.length > 0) {
+                        const uniqueTags = [...new Set(data.detected)];
+                        uniqueTags.forEach(tag => {
+                            const span = document.createElement('span');
+                            span.className = 'tag';
+                            span.innerText = tag;
+                            tagsDiv.appendChild(span);
+                        });
+                    } else {
+                        statusDiv.innerText = '未检测到目标';
+                    }
+                } else {
+                    statusDiv.innerText = '错误: ' + (data.error || '未知错误');
+                }
+            } catch (err) {
+                statusDiv.innerText = '请求失败';
+                console.error(err);
+            }
+        };
+    </script>
+</body>
+</html>
