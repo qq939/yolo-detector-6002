@@ -16,7 +16,7 @@ AUG_PIPELINE = [
 # 数据集根目录 (L16)
 DATASET_ROOT = '/Users/jimjiang/.openclaw/workspace/yolo-detector-6002/vertical shefule.yolov8'
 # 每张原图增广的数量 (L18)
-AUG_COUNT_PER_IMAGE = 5
+AUG_COUNT_PER_IMAGE = 15
 # ===============================================
 
 def increment():
