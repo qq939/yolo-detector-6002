@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['Black metal plate', 'shiney metal plate', 'spacer']
+
+roboflow:
+  workspace: jiangs-workspace-ize0e
+  project: jiangs-workspace-ize0e
+  version: dataset
+  license: Private
+  url: https://app.roboflow.com/jiangs-workspace-ize0e/jiangs-workspace-ize0e/dataset

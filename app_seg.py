@@ -55,6 +55,9 @@ def predict_seg():
         
         # 保存结果图
         result = results[0]
+        print("-"*1000)
+        print(result)
+        print("-"*1000)
         res_filename = f"res_{filename}"
         res_path = os.path.join(app.config['UPLOAD_FOLDER'], res_filename)
         
