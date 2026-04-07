@@ -9,7 +9,7 @@ from pathlib import Path
 
 # Global Parameters
 # 分割模型权重路径 (L12)
-MODEL_PATH = '/Users/jimjiang/.openclaw/workspace/yolo-detector-6002/public/runs/train_seg/yolo_segmenter/weights/last.pt'
+MODEL_PATH = '/Users/jimjiang/.openclaw/workspace/yolo-detector-6002/public/runs/train_seg_2/yolo_segmenter/weights/last.pt'
 # 上传目录 (L14)
 UPLOAD_FOLDER = 'public/uploads'
 # 允许的文件扩展名 (L16)
@@ -62,7 +62,7 @@ def predict_seg():
         res_path = os.path.join(app.config['UPLOAD_FOLDER'], res_filename)
         
         # plot() 会返回带有 mask 和 label 的图像
-        res_img = result.plot()
+        res_img = result.plot(boxes=False, masks=True, labels=True)
         cv2.imwrite(res_path, res_img)
         
         # 获取检测到的类别
